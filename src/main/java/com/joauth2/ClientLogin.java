@@ -1,7 +1,5 @@
 package com.joauth2;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.lang.Console;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
@@ -11,7 +9,6 @@ import cn.hutool.log.LogFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -23,7 +20,7 @@ import java.util.concurrent.ConcurrentMap;
  * @see
  * @since 2019/3/23
  */
-public class ClientLogin extends AbstractRequestor{
+public class ClientLogin extends AbstractRequester {
 
     private static Log log = LogFactory.get(ClientLogin.class);
 

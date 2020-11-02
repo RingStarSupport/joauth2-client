@@ -1,6 +1,7 @@
 package com.joauth2;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.ContentType;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
@@ -17,9 +18,9 @@ import java.util.Map;
  * @see
  * @since 2019/4/29
  */
-public class AbstractRequestor {
+public class AbstractRequester {
 
-    private static Log log = LogFactory.get(AbstractRequestor.class);
+    private static Log log = LogFactory.get(AbstractRequester.class);
 
     /**
      * POST请求
@@ -34,7 +35,7 @@ public class AbstractRequestor {
         }
 
         String result = HttpUtil.createPost(url)
-                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Content-Type", ContentType.FORM_URLENCODED.toString())
                 .form(params)
                 .execute().body();
 

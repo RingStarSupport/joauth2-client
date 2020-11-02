@@ -53,7 +53,7 @@ public class JOAuthContextListener implements ServletContextListener{
 
         if (!Attr.OFFLINE && StrUtil.isNotEmpty(Attr.TOKEN)) {
             // 延迟刷新Client数据
-            Scheduler.refershClient();
+            Scheduler.refreshClient();
             // 开启自动更新
             FileManager.autoUpgrade();
             // 开启定时任务

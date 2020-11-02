@@ -3,8 +3,6 @@ package com.joauth2.upgrade;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.io.StreamProgress;
-import cn.hutool.core.lang.Console;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.*;
 import cn.hutool.cron.CronUtil;
@@ -16,15 +14,13 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import com.joauth2.AbstractRequestor;
+import com.joauth2.AbstractRequester;
 import com.joauth2.Attr;
 import com.joauth2.Client;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -39,7 +35,7 @@ import java.util.zip.ZipInputStream;
  * @see
  * @since 2019/4/29
  */
-public class FileManager extends AbstractRequestor{
+public class FileManager extends AbstractRequester {
 
     private static Log log = LogFactory.get();
 

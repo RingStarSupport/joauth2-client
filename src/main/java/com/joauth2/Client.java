@@ -5,13 +5,10 @@ import java.util.Map;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.lang.Console;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.cron.CronUtil;
-import cn.hutool.cron.task.Task;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
@@ -21,7 +18,7 @@ import cn.hutool.setting.dialect.Props;
 /**
  * 授权登录器
  */
-public class Client extends AbstractRequestor{
+public class Client extends AbstractRequester {
 
 	private static Log log = LogFactory.get(Client.class);
 	
@@ -33,7 +30,6 @@ public class Client extends AbstractRequestor{
 	 * @return
 	 */
     public static synchronized String getCode() {
-
     	String clientId = props.getStr("auth.app_key");
         String redirectUri = StrUtil.isEmpty(props.getStr("auth.redirect_uri")) ? "/" : props.getStr("auth.redirect_uri");
         String requestUrl = props.getStr("auth.url") + "/authorize";
@@ -218,7 +214,7 @@ public class Client extends AbstractRequestor{
 		}
 
 		String requestUrl = Attr.props.getStr("auth.url") + "/offline";
-		Map<String, Object> params = MapUtil.newHashMap();
+		Map<String, Object> params = MapUtil.newHashMap(2);
 		params.put("access_token", Attr.TOKEN);
 		params.put(OAuth2Constants.SESSION_RESTART_RECORD_ID, Attr.RESTART_RECORD_ID);
 
@@ -233,6 +229,24 @@ public class Client extends AbstractRequestor{
 		}
 	}
 
+	/**
+	 * 告诉Server我还活着
+	 */
+	public static void keepAlive(){
+		if (Attr.OFFLINE || StrUtil.isEmpty(Attr.TOKEN)) {
+			return;
+		}
+		String requestUrl = Attr.props.getStr("auth.url") + "/keepAlive";
+		Map<String, Object> params = MapUtil.newHashMap(2);
+		params.put("access_token", Attr.TOKEN);
+		params.put("message", "I'm still alive~");
+
+		JSONObject resultJson = doPost(requestUrl, params);
+		if (resultJson.getInt("code") != 10000) {
+			String message = resultJson.getStr("msg");
+			log.error(message);
+		}
+	}
 
 
 }

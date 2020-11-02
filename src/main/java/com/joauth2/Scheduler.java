@@ -17,11 +17,14 @@ public class Scheduler {
     /**
      * 定时获取最新的应用数据
      */
-    public static void refershClient(){
+    public static void refreshClient(){
         Attr.CRON_APPDATA_ID = CronUtil.schedule("*/1 * * * *", new Task() {
             @Override
             public void execute() {
-                synchronized (this) {
+                synchronized (Scheduler.class) {
+                    keepAlive();
+
+                    // 在授权的有效时间内持续获取更新数据
                     Date endTime = Attr.END_TIME;
                     // 判断是否是间隔的结束时间
                     Date now = new Date();
@@ -31,6 +34,14 @@ public class Scheduler {
                 }
             }
         });
+    }
+
+    /**
+     * 告诉服务端我还活着
+     * 当服务端超过N分钟未接收到「我还活着」的消息时，强制杀死该客户端
+     */
+    private static void keepAlive(){
+        Client.keepAlive();
     }
 
 }
