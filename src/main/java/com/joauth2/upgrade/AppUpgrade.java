@@ -1,9 +1,6 @@
 package com.joauth2.upgrade;
 
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.List;
 

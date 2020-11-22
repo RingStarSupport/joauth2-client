@@ -26,6 +26,8 @@ public class Attr {
     public static int MAX_USER = 0;
     // 离线模式
     public static boolean OFFLINE = false;
+    // 开发（演示）模式
+    public static boolean DEBUG_MODE = false;
     // 用于输出的信息
     public static String MESSAGE_TMP = "";
     // 配置文件
