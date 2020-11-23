@@ -4,6 +4,7 @@ import cn.hutool.setting.dialect.Props;
 import com.joauth2.AbstractRequester;
 import com.joauth2.Attr;
 import com.joauth2.Client;
+import com.joauth2.ClientLogin;
 import org.junit.Test;
 
 import java.util.Map;
@@ -97,4 +98,8 @@ public class ClientRestTest extends AbstractRequester {
         System.out.println(code);
     }
 
+    @Test
+    public void clientLogin(){
+//        ClientLogin.login()
+    }
 }

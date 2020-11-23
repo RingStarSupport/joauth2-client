@@ -143,14 +143,16 @@ public class ClientLogin extends AbstractRequester {
      *  @return
      */
     public static boolean existLoginedUser(int userId, HttpSession session) {
-        String currentKey = OAuth2Constants.SESSION_EXCLUDE_LOGIN + ":" + userId;
-        for (String key : userSessionMap.keySet()) {
-            // 存在相同的key，说明该用户已登录
-            if (StrUtil.equals(key, currentKey)) {
-                return true;
-            }
-        }
+        // always return false
         return false;
+//        String currentKey = OAuth2Constants.SESSION_EXCLUDE_LOGIN + ":" + userId;
+//        for (String key : userSessionMap.keySet()) {
+//            // 存在相同的key，说明该用户已登录
+//            if (StrUtil.equals(key, currentKey)) {
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
     /**
