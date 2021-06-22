@@ -6,12 +6,12 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 客户端登录方法处理
@@ -24,6 +24,7 @@ public class ClientLogin extends AbstractRequester {
 
     private static Log log = LogFactory.get(ClientLogin.class);
 
+    private static ReentrantLock lock = new ReentrantLock();
     private static ConcurrentMap<String, String> userSessionMap = new ConcurrentHashMap<String, String>();
 
     /**
@@ -34,29 +35,42 @@ public class ClientLogin extends AbstractRequester {
      * @return
      */
     public static <T> R login(ClientUser<T> user, HttpServletRequest request){
-        HttpSession session = request.getSession();
-
-        // 检查是否已登录
-        if (ClientLogin.existLoginedUser(user.getId(), session)) {
-            return new R(500, "当前账户已登录，无法再次登录");
+        lock.lock();
+        try {
+            if (request == null) {
+                return new R(500, "HttpServletRequest must not be null");
+            }
+            HttpSession session = request.getSession();
+            if (session == null) {
+                return new R(500, "HttpSession must not be null");
+            }
+    
+            // 检查是否已登录
+            if (ClientLogin.existLoginedUser(user.getId(), session)) {
+                return new R(500, "当前账户已登录，无法再次登录");
+            }
+    
+            if (Attr.getMaxUser() == 0) {
+                return new R(500, Attr.getMessage() + "，无法登录");
+            }
+    
+            // 检查授权许可
+            if (Attr.getTotalUser() + 1 > Attr.getMaxUser()) {
+                return new R(500, "超过最大用户限制，无法登录");
+            }
+    
+            // 保存内部登录数据
+            ClientLogin.saveLoginInfo(user, request);
+    
+            // 增加登录人数
+            plusTotalUser(user.getId(), session);
+            session.setAttribute(OAuth2Constants.SESSION_CLIENT_ATTR, user);
+        } catch (Exception e) {
+            log.error("未知异常", e);
+        } finally {
+            lock.unlock();
         }
-
-        if (Attr.getMaxUser() == 0) {
-            return new R(500, Attr.getMessage() + "，无法登录");
-        }
-
-        // 检查授权许可
-        if (Attr.getTotalUser() + 1 > Attr.getMaxUser()) {
-            return new R(500, "超过最大用户限制，无法登录");
-        }
-
-        // 保存内部登录数据
-        ClientLogin.saveLoginInfo(user, request);
-
-        // 增加登录人数
-        plusTotalUser(user.getId(), session);
-        session.setAttribute(OAuth2Constants.SESSION_CLIENT_ATTR, user);
-
+        
         return new R(200, "success");
     }
 

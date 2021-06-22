@@ -4,6 +4,8 @@ import cn.hutool.setting.dialect.Props;
 
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 静态变量统一管理
@@ -15,6 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Attr {
     
     private static final ConcurrentHashMap<String, Object> ctx = new ConcurrentHashMap<>();
+    
+    private static ReentrantLock userLock = new ReentrantLock();
+    private static final AtomicInteger totalUser = new AtomicInteger(0);
 
     // 令牌
     public static String TOKEN = "";
@@ -36,14 +41,16 @@ public class Attr {
     
     // 当前用户数量
     public static void setTotalUser(int value) {
-        synchronized (Attr.class) {
-            ctx.put(Constant.TOTAL_USER, value);
-        }
+        userLock.lock();
+        totalUser.set(value);
+        userLock.unlock();
     }
     
     public static int getTotalUser() {
-        Object num = ctx.get(Constant.TOTAL_USER);
-        return num == null ? 0 : (Integer) num;
+        userLock.lock();
+        int i = totalUser.get();
+        userLock.unlock();
+        return i;
     }
     
     

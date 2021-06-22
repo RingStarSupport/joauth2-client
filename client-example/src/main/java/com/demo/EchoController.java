@@ -1,5 +1,7 @@
 package com.demo;
 
+import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.joauth2.Attr;
 import com.joauth2.ClientLogin;
 import com.joauth2.ClientUser;
@@ -9,6 +11,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * @author wujiawei
@@ -18,6 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RestController
 public class EchoController {
+    
+    private static List<Integer> ids = new ArrayList<>();
+    private static ExecutorService executorService = Executors.newCachedThreadPool();
     
     @GetMapping("echo")
     public String echo() {
@@ -32,8 +45,9 @@ public class EchoController {
     
     @GetMapping("login")
     public String login(HttpServletRequest request) {
-        String username = "username";
-        int id = 1;
+        String username = RandomUtil.randomString(RandomUtil.randomInt(1, 9));
+        int id = RandomUtil.randomInt();
+        ids.add(id);
         
         ClientUser<Object> user = new ClientUser<Object>();
         user.setId(id);
@@ -41,16 +55,63 @@ public class EchoController {
         user.setNickname(username);
         R result = ClientLogin.login(user, request);
         if (result.getCode() == 200) {
-            return "login success";
+            return "login success: total user["+ Attr.getTotalUser() +"], max user["+ Attr.getMaxUser() +"]";
         }
         
         return "login fail: " + result.getMsg();
     }
     
+    @GetMapping("login/batch")
+    public String loginBatch(Integer max, HttpServletRequest request) {
+        max = max == null ? 66 : max;
+        CountDownLatch latch = new CountDownLatch(max);
+        for (int i = 0; i < max; i++) {
+            final int finalI = i;
+            final HttpServletRequest finalReq = request;
+            executorService.submit(()->{
+                try {
+                    String username = RandomUtil.randomString(RandomUtil.randomInt(1, 9));
+                    int id = RandomUtil.randomInt(10, 999999);
+                    ids.add(id);
+    
+                    ClientUser<Object> user = new ClientUser<Object>();
+                    user.setId(id);
+                    user.setUsername(username);
+                    user.setNickname(username);
+                    R r = ClientLogin.login(user, finalReq);
+                    log.info("["+ finalI +"] " + r.getMsg());
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+    
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "all user login complete, total user["+ Attr.getTotalUser() +"]";
+    }
+    
     @GetMapping("logout")
     public String logout(HttpServletRequest request) {
-        ClientLogin.logout(1, request.getSession());
+        int index = RandomUtil.randomInt(0, ids.size());
+        int id = ids.get(index);
+        ClientLogin.logout(id, request.getSession());
+        ids.remove(id);
         return "total user: " + Attr.getTotalUser();
+    }
+    
+    @GetMapping("logout/all")
+    public String logoutAll(HttpServletRequest request) {
+        for (Integer id : ids) {
+            ClientLogin.logout(id, request.getSession());
+            ids.remove(id);
+        }
+        return "complete";
     }
     
 }
