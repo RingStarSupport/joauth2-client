@@ -19,7 +19,7 @@ public class Constructor {
     
     public void execute() {
         String localIp = AuthSecureUtils.getInnetIp();
-        log.info("当前IP: {}", localIp);
+        log.info("[constructor] 当前IP: {}", localIp);
     
         // 检测配置文件
         String checkPropsStr = checkProps();
@@ -29,17 +29,17 @@ public class Constructor {
         }
     
         // 检测token和expire_in
-        if (StrUtil.isNotEmpty(Attr.TOKEN) && Attr.getIntervals() != 0) {
-            Attr.setMessage("无效的TOKEN，请检查Client文件是否损坏");
-            Attr.canEncrypt = false;
-        }
+//        if (StrUtil.isNotEmpty(Attr.TOKEN) && Attr.getIntervals() != 0) {
+//            Attr.setMessage("无效的TOKEN，请检查Client文件是否损坏");
+//            Attr.canEncrypt = false;
+//        }
     
         // 获取token
         if (Attr.canEncrypt) {
             Attr.setMessage(Client.getCode());
         }
         Attr.MESSAGE_TMP = Attr.getMessage();
-        log.info(Attr.getMessage());
+        log.info("[constructor] {}",Attr.getMessage());
     
         // 初始化应用
         ClientLogin.initApp();

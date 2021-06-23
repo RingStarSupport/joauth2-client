@@ -1,8 +1,5 @@
 package com.joauth2;
 
-import java.util.Date;
-import java.util.Map;
-
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
@@ -14,6 +11,9 @@ import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import cn.hutool.setting.dialect.Props;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 授权登录器
@@ -189,18 +189,26 @@ public class Client extends AbstractRequester {
 		params.put("access_token", Attr.TOKEN);
 
 		JSONObject resultJson = doPost(requestUrl, params);
-		if (resultJson.getInt("code") == 10000) {
+		int code = resultJson.getInt("code");
+		if (code == 10000) {
 			JSONObject json = resultJson.getJSONObject("object");
 			Attr.setMaxUser(json.getInt("maxUser"));
 			Attr.setIntervals(json.getInt("intervals"));
 			setEndTime(Attr.getIntervals());
 			Attr.canEncrypt = true;
 		} else {
-			String message = resultJson.getStr("msg");
-			Attr.setMessage(message);
-			Attr.canEncrypt = false;
 			Attr.setMaxUser(0);
 			ClientLogin.initApp();
+			if (code == 403) {
+				Attr.setMessage("");
+				Attr.canEncrypt = true;
+				CronUtil.stop();
+				new Constructor().execute();
+			} else {
+				String message = resultJson.getStr("msg");
+				Attr.setMessage(message);
+				Attr.canEncrypt = false;
+			}
 		}
 		
 		log.info("update app data & max user = {}", Attr.getMaxUser());
@@ -210,7 +218,7 @@ public class Client extends AbstractRequester {
 	 * 下线App
 	 * @return true/false
 	 */
-	public static boolean offline(){
+	public static boolean offline() {
 		if (Attr.OFFLINE || StrUtil.isEmpty(Attr.TOKEN)) {
 			return false;
 		}
@@ -240,8 +248,7 @@ public class Client extends AbstractRequester {
 		}
 		String requestUrl = Attr.props.getStr("auth.url") + "/keepAlive";
 		Map<String, Object> params = MapUtil.newHashMap(2);
-		params.put("access_token", Attr.TOKEN);
-		params.put("message", "I'm still alive~");
+		params.put("app_key", Attr.props.getStr("auth.app_key"));
 
 		JSONObject resultJson = doPost(requestUrl, params);
 		if (resultJson.getInt("code") != 10000) {

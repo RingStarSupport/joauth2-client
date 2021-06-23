@@ -4,7 +4,6 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.IvParameterSpec;
-
 import java.security.Key;
 
 public class DESUtils {
@@ -28,7 +27,7 @@ public class DESUtils {
 
 	/**
 	 * 3DES加密
-	 * 
+	 *
 	 * @param plainText
 	 *            普通文本
 	 * @return
@@ -49,7 +48,7 @@ public class DESUtils {
 
 	/**
 	 * 3DES解密
-	 * 
+	 *
 	 * @param encryptText
 	 *            加密文本
 	 * @return

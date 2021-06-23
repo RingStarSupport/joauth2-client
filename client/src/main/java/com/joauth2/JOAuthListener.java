@@ -1,11 +1,14 @@
 package com.joauth2;
 
-import javax.servlet.annotation.WebListener;
-import javax.servlet.http.*;
-
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import org.springframework.context.annotation.Configuration;
+
+import javax.servlet.annotation.WebListener;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 @WebListener
 public class JOAuthListener implements HttpSessionListener, HttpSessionAttributeListener {
@@ -19,12 +22,12 @@ public class JOAuthListener implements HttpSessionListener, HttpSessionAttribute
 
 	@Override
 	public void attributeRemoved(HttpSessionBindingEvent event) {
-		
+	
 	}
 
 	@Override
 	public void attributeReplaced(HttpSessionBindingEvent arg0) {
-		
+	
 	}
 
 	@Override

@@ -34,14 +34,19 @@ public class AbstractRequester {
             params = AuthSecureUtils.encodeKeysToMap(params);
         }
 
-        String result = HttpUtil.createPost(url)
-                .header("Content-Type", ContentType.FORM_URLENCODED.toString())
-                .form(params)
-                .execute().body();
+        String result = "";
+        try {
+            result = HttpUtil.createPost(url)
+                    .header("Content-Type", ContentType.FORM_URLENCODED.toString())
+                    .form(params)
+                    .execute()
+                    .body();
+        } catch (Exception e) {
+            log.error("网络连接失败", e.getCause());
+        }
 
         if (StrUtil.isBlank(result) || !StrUtil.startWith(result, "{")) {
-            log.info("请求结果：" + result);
-            return null;
+            return new JSONObject();
         }
         JSONObject resultJson = JSONUtil.parseObj(result);
 

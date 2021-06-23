@@ -1,12 +1,7 @@
 package com.joauth2;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.cron.CronUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import cn.hutool.setting.dialect.Props;
-import com.joauth2.upgrade.FileManager;
-import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
