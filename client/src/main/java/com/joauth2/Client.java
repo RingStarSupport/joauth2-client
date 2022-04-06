@@ -202,7 +202,9 @@ public class Client extends AbstractRequester {
 			if (code == 403) {
 				Attr.setMessage("");
 				Attr.canEncrypt = true;
-				CronUtil.stop();
+				try {
+					CronUtil.stop();
+				}catch (Exception e){}
 				new Constructor().execute();
 			} else {
 				String message = resultJson.getStr("msg");

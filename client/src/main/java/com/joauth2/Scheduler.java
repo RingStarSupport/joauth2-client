@@ -20,12 +20,13 @@ public class Scheduler {
     public static void refreshClient() {
         Attr.CRON_APPDATA_ID = CronUtil.schedule("*/1 * * * *", (Task) () -> {
             synchronized (Scheduler.class) {
+                Client.updateAppData();
                 // 在授权的有效时间内持续获取更新数据
                 Date endTime = Attr.END_TIME;
                 // 判断是否是间隔的结束时间
                 Date now = new Date();
                 if (endTime == null || endTime.getTime() < now.getTime()) {
-                    Client.updateAppData();
+//                    Client.updateAppData();
                 }
             }
         });

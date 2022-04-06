@@ -2,6 +2,7 @@ package com.joauth2;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.ContentType;
+import cn.hutool.http.HttpException;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
@@ -41,12 +42,16 @@ public class AbstractRequester {
                     .form(params)
                     .execute()
                     .body();
-        } catch (Exception e) {
+        } catch (HttpException e) {
             log.error("网络连接失败", e.getCause());
+        } catch (Exception e2) {
+            log.error("未知网络异常", e2.getCause());
         }
 
         if (StrUtil.isBlank(result) || !StrUtil.startWith(result, "{")) {
-            return new JSONObject();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", 403);
+            return jsonObject;
         }
         JSONObject resultJson = JSONUtil.parseObj(result);
 
