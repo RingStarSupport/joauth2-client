@@ -1,0 +1,19 @@
+### echo
+GET http://localhost:1942/echo
+Accept: application/json
+
+### 获取最大用户数
+GET http://localhost:1942/max-user
+Accept: application/json
+
+### 登录
+GET http://localhost:1942/login
+Accept: application/json
+
+### 批量登录
+GET http://localhost:1942/login/batch?max=12
+Accept: application/json
+
+### 注销全部
+GET http://localhost:1942/logout/all
+Accept: application/json
