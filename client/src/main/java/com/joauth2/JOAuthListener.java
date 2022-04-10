@@ -37,10 +37,6 @@ public class JOAuthListener implements HttpSessionListener, HttpSessionAttribute
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
-		if (Attr.getTotalUser() > 0) {
-			Attr.setTotalUser(Attr.getTotalUser() - 1);
-		}
-
 		HttpSession session = se.getSession();
 
 		// 删除授权平台上保存的登录信息

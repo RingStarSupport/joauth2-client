@@ -19,7 +19,7 @@ public class Constructor {
     
     public void execute() {
         String localIp = AuthSecureUtils.getInnetIp();
-        log.info("[constructor] 当前IP: {}", localIp);
+        log.info("[constructor] 当前内网IP: {}", localIp);
     
         // 检测配置文件
         String checkPropsStr = checkProps();
@@ -45,10 +45,11 @@ public class Constructor {
         ClientLogin.initApp();
     
         if (!Attr.OFFLINE && StrUtil.isNotEmpty(Attr.TOKEN)) {
+            Scheduler scheduler = new Scheduler();
             // 延迟刷新Client数据
-            Scheduler.refreshClient();
+            scheduler.refreshClient();
             // keepalive
-            Scheduler.keepAlive();
+            scheduler.keepAlive();
             // 开启自动更新
             FileManager.autoUpgrade();
             // 开启定时任务

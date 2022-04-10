@@ -46,19 +46,24 @@ public class ClientLogin extends AbstractRequester {
                 return new R(500, "HttpSession must not be null");
             }
     
-            // 检查是否已登录
-            if (ClientLogin.existLoginedUser(user.getId(), session)) {
-                return new R(500, "当前账户已登录，无法再次登录");
-            }
+            // 演示模式不再限制登录
+            if (!Attr.DEBUG_MODE) {
+                // 检查是否已登录
+                if (ClientLogin.existLoginedUser(user.getId(), session)) {
+                    return new R(500, "当前账户已登录，无法再次登录");
+                }
     
-            if (Attr.getMaxUser() == 0) {
-                return new R(500, Attr.getMessage() + "，无法登录");
-            }
+                if (Attr.getMaxUser() == 0) {
+                    return new R(500, Attr.getMessage() + "，无法登录");
+                }
     
-            // 检查授权许可
-            if (Attr.getTotalUser() + 1 > Attr.getMaxUser()) {
-                return new R(500, "超过最大用户限制，无法登录");
+                // 检查授权许可
+                if (Attr.getTotalUser() + 1 > Attr.getMaxUser()) {
+                    return new R(500, "超过最大用户限制，无法登录");
+                }
             }
+            
+            
     
             // 保存内部登录数据
             ClientLogin.saveLoginInfo(user, request);
@@ -147,6 +152,7 @@ public class ClientLogin extends AbstractRequester {
             }
         }
 
+        Attr.DEBUG_MODE = false;
         Attr.setTotalUser(0);
         userSessionMap = new ConcurrentHashMap<String, String>();
     }
@@ -174,7 +180,7 @@ public class ClientLogin extends AbstractRequester {
      * 增加已登录用户数量
      */
     private static void plusTotalUser(int userId, HttpSession session){
-        Attr.setTotalUser(Attr.getTotalUser() + 1);
+        Attr.addTotalUser();
         String currentKey = OAuth2Constants.SESSION_EXCLUDE_LOGIN + ":" + userId;
         userSessionMap.put(currentKey, session.getId());
         log.info("目前的总用户数量:" + Attr.getTotalUser());
@@ -210,6 +216,8 @@ public class ClientLogin extends AbstractRequester {
             }
         }
         session.invalidate();
+        Attr.subTotalUser();
+        log.info("目前的总用户数量:" + Attr.getTotalUser());
     }
 
     /**

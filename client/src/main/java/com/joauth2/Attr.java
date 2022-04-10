@@ -53,6 +53,17 @@ public class Attr {
         return i;
     }
     
+    public static void addTotalUser() {
+        totalUser.set(totalUser.addAndGet(1));
+    }
+    
+    // 减少totalUser
+    public static void subTotalUser() {
+        if (totalUser.get() > 0) {
+            totalUser.set(totalUser.decrementAndGet());
+        }
+    }
+    
     
     // 最大用户数量
     public static void setMaxUser(int value) {

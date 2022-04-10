@@ -1,6 +1,5 @@
 package com.demo;
 
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.joauth2.Attr;
 import com.joauth2.ClientLogin;
@@ -12,13 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * @author wujiawei
@@ -29,15 +25,15 @@ import java.util.concurrent.Future;
 @RestController
 public class EchoController {
     
-    private static List<Integer> ids = new ArrayList<>();
-    private static ExecutorService executorService = Executors.newCachedThreadPool();
+    private static final List<Integer> ids = new ArrayList<>();
+    private static final ExecutorService executorService = Executors.newCachedThreadPool();
     
     @GetMapping("echo")
     public String echo() {
         return "echo success";
     }
     
-    @GetMapping("attr")
+    @GetMapping("max-user")
     public String getStaticAttr() {
         int maxUser = Attr.getMaxUser();
         return "max user :" + maxUser;
@@ -109,8 +105,8 @@ public class EchoController {
     public String logoutAll(HttpServletRequest request) {
         for (Integer id : ids) {
             ClientLogin.logout(id, request.getSession());
-            ids.remove(id);
         }
+        ids.clear();
         return "complete";
     }
     

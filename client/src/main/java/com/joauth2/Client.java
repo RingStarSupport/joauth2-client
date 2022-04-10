@@ -97,6 +97,7 @@ public class Client extends AbstractRequester {
 		Attr.TOKEN = resultJson.getStr("access_token");
         Attr.setMaxUser(resultJson.getInt("max_user"));
 		Attr.setIntervals(resultJson.getInt("expires_in") == null ? 180 : resultJson.getInt("expires_in"));
+	    Attr.DEBUG_MODE = "YES".equals(resultJson.getStr("debug"));
 		Attr.RESTART_RECORD_ID = resultJson.getInt(OAuth2Constants.SESSION_RESTART_RECORD_ID);
 		Attr.APP_NAME = resultJson.getStr("app_name");
 		setEndTime(Attr.getIntervals());
@@ -194,6 +195,7 @@ public class Client extends AbstractRequester {
 			JSONObject json = resultJson.getJSONObject("object");
 			Attr.setMaxUser(json.getInt("maxUser"));
 			Attr.setIntervals(json.getInt("intervals"));
+			Attr.DEBUG_MODE = json.getJSONObject("debug") != null && (json.getJSONObject("debug").getInt("value") == 1);
 			setEndTime(Attr.getIntervals());
 			Attr.canEncrypt = true;
 		} else {
@@ -213,7 +215,7 @@ public class Client extends AbstractRequester {
 			}
 		}
 		
-		log.info("update app data & max user = {}", Attr.getMaxUser());
+		log.debug("update app data & max user = {}", Attr.getMaxUser());
 	}
 
 	/**
@@ -257,9 +259,7 @@ public class Client extends AbstractRequester {
 			String message = resultJson.getStr("msg");
 			log.error(message);
 		}
-		
-		log.info("max user when keep alive = {}",Attr.getMaxUser());
-		
+		log.debug("max user when keep alive = {}",Attr.getMaxUser());
 	}
 
 
