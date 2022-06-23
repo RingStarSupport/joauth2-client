@@ -43,9 +43,9 @@ public class AbstractRequester {
                     .execute()
                     .body();
         } catch (HttpException e) {
-            log.error("网络连接失败", e.getCause());
+            log.error("App Network connection failed: {} ===> {}", url, e.getMessage(), e.getCause());
         } catch (Exception e2) {
-            log.error("未知网络异常", e2.getCause());
+            log.error("App Unknown network exception: {} ===> {}", url, e2.getMessage(), e2.getCause());
         }
 
         if (StrUtil.isBlank(result) || !StrUtil.startWith(result, "{")) {

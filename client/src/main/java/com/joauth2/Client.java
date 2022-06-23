@@ -234,11 +234,11 @@ public class Client extends AbstractRequester {
 
 		JSONObject resultJson = doPost(requestUrl, params);
 		if (resultJson.getInt("code") == 10000) {
-			log.info("App下机成功");
+			log.info("App Off the hook");
 			return true;
 		} else {
 			String message = resultJson.getStr("msg");
-			log.error(message);
+			log.error("App offline error, {}: {}", resultJson.getInt("code"), message);
 			return false;
 		}
 	}
@@ -257,7 +257,7 @@ public class Client extends AbstractRequester {
 		JSONObject resultJson = doPost(requestUrl, params);
 		if (resultJson.getInt("code") != 10000) {
 			String message = resultJson.getStr("msg");
-			log.error(message);
+			log.error("App keep alive error, {}: {}", resultJson.getInt("code"), message);
 		}
 		log.debug("max user when keep alive = {}",Attr.getMaxUser());
 	}

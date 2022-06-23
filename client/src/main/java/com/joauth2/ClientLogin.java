@@ -72,7 +72,7 @@ public class ClientLogin extends AbstractRequester {
             plusTotalUser(user.getId(), session);
             session.setAttribute(OAuth2Constants.SESSION_CLIENT_ATTR, user);
         } catch (Exception e) {
-            log.error("未知异常", e);
+            log.error("App Unknown Exception When Login: {}", e.getMessage(), e);
         } finally {
             lock.unlock();
         }
